@@ -159,7 +159,7 @@ The **SVM model** was selected as the final model for deployment.
 
 ---
 
-# 🔮Future Improvements
+# Future Improvements
 
 * Deep Learning models (LSTM / BERT)
 * Real-time sentiment analysis
