@@ -70,6 +70,11 @@ Interactive visualizations of the dataset including:
 
 Users can upload a **CSV file containing movie reviews**.
 
+The uploader also accepts CSV files created from
+[Xquik](https://xquik.com) results. It detects `text`, `tweet`, `full_text`,
+`content`, `body`, `message`, `comment`, and `caption` columns while preserving
+the existing `review` column workflow.
+
 Example CSV:
 
 | review                 |
@@ -142,6 +147,23 @@ movie-review-sentiment-analysis-dashboard
 ├── IMDB Dataset.csv
 ├── requirements.txt
 └── README.md
+
+---
+
+# Installation
+
+Install the application dependencies:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+Download `IMDB Dataset.csv` into the repository root, then launch the
+dashboard:
+
+```bash
+streamlit run app.py
+```
 
 ---
 
