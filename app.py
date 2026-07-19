@@ -3,10 +3,10 @@ import pickle
 import re
 import nltk
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 from nltk.corpus import stopwords
+from csv_columns import find_text_column
 
 # Download stopwords
 nltk.download('stopwords')
@@ -31,6 +31,7 @@ def clean_text(text):
     words = text.split()
     words = [word for word in words if word not in stop_words]
     return " ".join(words)
+
 
 # Page settings
 st.set_page_config(page_title="Sentiment Analysis Dashboard", layout="wide")
@@ -92,7 +93,7 @@ with tab1:
             try:
                 confidence = model.decision_function(vector)
                 confidence = round(abs(confidence[0]),2)
-            except:
+            except AttributeError:
                 confidence = "N/A"
 
             if prediction[0] == 1:
@@ -198,7 +199,14 @@ with tab3:
 
     st.header("Upload Your Own Review File")
 
-    uploaded_file = st.file_uploader("Upload CSV file containing reviews")
+    uploaded_file = st.file_uploader(
+        "Upload CSV file containing reviews",
+        help=(
+            "Accepts review columns and CSV files created from Xquik results "
+            "with text, tweet, full_text, content, body, message, comment, or "
+            "caption columns."
+        ),
+    )
 
     if uploaded_file:
 
@@ -209,9 +217,17 @@ with tab3:
 
         if st.button("Predict Sentiments for File"):
 
-            if 'review' in user_df.columns:
+            text_column = find_text_column(user_df.columns)
 
-                cleaned_reviews = user_df['review'].apply(clean_text)
+            if text_column is not None:
+
+                text_values = user_df[text_column].fillna("").astype(str).str.strip()
+
+                if not text_values.astype(bool).any():
+                    st.error("The selected text column is empty")
+                    st.stop()
+
+                cleaned_reviews = text_values.apply(clean_text)
 
                 vectors = vectorizer.transform(cleaned_reviews)
 
@@ -235,4 +251,4 @@ with tab3:
                 )
 
             else:
-                st.error("CSV must contain a column named 'review'")
+                st.error("CSV must contain a review, text, tweet, full_text, content, body, message, comment, or caption column")
